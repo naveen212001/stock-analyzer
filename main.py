@@ -12,7 +12,8 @@ from data_cleaner import clean_stock_data
 st.title("📊 Stock Analyzer")
 st.markdown("A trust-first tool for retail investors — clean data, no noise.")
 
-@st.cache_data(ttl=86400)  # Cache for 24h
+# Cache for 24h
+@st.cache_data(ttl=86400)
 def get_stock_symbols():
     API_KEY = st.secrets["FINNHUB_API_KEY"]
     url = f"https://finnhub.io/api/v1/stock/symbols?exchange=US&token={API_KEY}"
@@ -22,8 +23,8 @@ def get_stock_symbols():
             data = response.json()
             return [item["symbol"] for item in data if item["type"] == "Common Stock"]
     except Exception as e:
-        st.error(f"Failed to load symbols: {e}")
-    return ["AAPL", "MSFT", "GOOGL"]  # Fallback 
+        st.error("Failed to load symbols")
+    return ["AAPL", "MSFT"]  # Fallback   
 
 # Load Tier Config
 @st.cache_data
@@ -39,7 +40,12 @@ TIER_CONFIG = load_tiers()
 st.sidebar.header("🔍 Select Stock & Analysis Tier")
 
 # Stock Input
-ticker = st.sidebar.selectbox("Select Stock", options=get_stock_symbols())    
+ticker = st.sidebar.selectbox(
+    "Select Stock",
+    options=get_stock_symbols(),
+    index=None,
+    placeholder="Choose a stock..."
+)       
 
 # Tier Selection
 tier_key = st.sidebar.selectbox(

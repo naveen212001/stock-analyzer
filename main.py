@@ -35,6 +35,19 @@ tier_key = st.sidebar.selectbox(
     format_func=lambda x: TIER_CONFIG[x]["name"]
 )
 
+@st.cache_data(ttl=86400)  # Cache for 24h
+def get_stock_symbols():
+    API_KEY = st.secrets["FINNHUB_API_KEY"]
+    url = f"https://finnhub.io/api/v1/stock/symbols?exchange=US&token={API_KEY}"
+    try:
+        response = requests.get(url)
+        if response.status_code == 200:
+            data = response.json()
+            return [item["symbol"] for item in data if item["type"] == "Common Stock"]
+    except Exception as e:
+        st.error(f"Failed to load symbols: {e}")
+    return ["AAPL", "MSFT", "GOOGL"]  # Fallback   
+
 # Display selected tier description
 st.sidebar.info(TIER_CONFIG[tier_key]["desc"])
 

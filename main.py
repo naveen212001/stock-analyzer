@@ -18,13 +18,15 @@ def get_stock_symbols():
     API_KEY = st.secrets["FINNHUB_API_KEY"]
     url = f"https://finnhub.io/api/v1/stock/symbols?exchange=US&token={API_KEY}"
     try:
-        response = requests.get(url)
+        response = requests.get(url, timeout=10)
         if response.status_code == 200:
             data = response.json()
             return [item["symbol"] for item in data if item["type"] == "Common Stock"]
+        else:
+            st.error(f"API Error {response.status_code}: {response.text}")
     except Exception as e:
-        st.error("Failed to load symbols")
-    return ["AAPL", "MSFT"]  # Fallback   
+        st.error(f"Request failed: {e}")
+    return ["AAPL", "MSFT"]  # Fallback     
 
 # Load Tier Config
 @st.cache_data

@@ -12,6 +12,25 @@ from data_cleaner import clean_stock_data
 st.title("📊 Stock Analyzer")
 st.markdown("A trust-first tool for retail investors — clean data, no noise.")
 
+def search_symbols(query):
+    API_KEY = st.secrets["FINNHUB_API_KEY"]
+    url = f"https://finnhub.io/api/v1/search?q={query}&token={API_KEY}"
+    try:
+        response = requests.get(url)
+        if response.status_code == 200:
+            data = response.json()
+            return [item["symbol"] for item in data["result"] if item["type"] == "Common Stock"]
+    except Exception as e:
+        st.error(f"Search failed: {e}")
+    return []   
+query = st.sidebar.text_input("Search Stock", "").upper()
+if query:
+    symbols = search_symbols(query)
+    if symbols:
+        ticker = st.sidebar.selectbox("Matches", options=symbols)
+    else:
+        st.sidebar.warning("No matches found")       
+
 # Cache for 24h
 @st.cache_data(ttl=86400)
 def get_stock_symbols():

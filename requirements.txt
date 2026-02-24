@@ -1,4 +1,4 @@
-streamlit
-requests
-pytz
+streamlit,
+requests,
+pytz,
 pandas

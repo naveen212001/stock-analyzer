@@ -26,7 +26,7 @@ TIER_CONFIG = load_tiers()
 st.sidebar.header("🔍 Select Stock & Analysis Tier")
 
 # Stock Input
-ticker = st.sidebar.text_input("Enter Stock Symbol (e.g., AAPL)", "").upper()
+ticker = st.sidebar.selectbox("Select Stock", options=get_stock_symbols())    
 
 # Tier Selection
 tier_key = st.sidebar.selectbox(
